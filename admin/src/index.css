@@ -1,0 +1,550 @@
+/* Admin Dashboard Styles (No Gradients, Slate Corporate Theme) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --admin-sidebar-bg: #0f172a;    /* Deep Slate Blue */
+  --admin-sidebar-hover: #1e293b;
+  --admin-primary: #2563eb;       /* Corporate Blue */
+  --admin-primary-hover: #1d4ed8;
+  --admin-bg-light: #f8fafc;
+  --admin-bg-white: #ffffff;
+  --admin-text: #1e293b;
+  --admin-text-muted: #64748b;
+  --admin-border: #e2e8f0;
+  --admin-success: #16a34a;
+  --admin-danger: #dc2626;
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --transition: all 0.2s ease;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--admin-bg-light);
+  color: var(--admin-text);
+  line-height: 1.5;
+}
+
+/* ==========================================
+   1. LOGIN PAGE STYLING
+   ========================================== */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #0f172a;
+  padding: 20px;
+}
+
+.login-card {
+  background-color: var(--admin-bg-white);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 420px;
+  padding: 40px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+.login-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.login-subtitle {
+  font-size: 13px;
+  color: var(--admin-text-muted);
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.captcha-box {
+  background-color: #f1f5f9;
+  border: 1px solid var(--admin-border);
+  padding: 12px;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  user-select: none;
+}
+
+/* ==========================================
+   2. MAIN LAYOUT (SIDEBAR + CONTENT)
+   ========================================== */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-sidebar {
+  width: 260px;
+  background-color: var(--admin-sidebar-bg);
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  z-index: 100;
+}
+
+.sidebar-header {
+  padding: 24px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  border-bottom: 1px solid #1e293b;
+}
+
+.sidebar-header span {
+  color: var(--admin-primary);
+}
+
+.sidebar-menu {
+  flex: 1;
+  padding: 20px 0;
+  overflow-y: auto;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 24px;
+  font-size: 14px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.sidebar-item:hover, .sidebar-item.active {
+  background-color: var(--admin-sidebar-hover);
+  color: #ffffff;
+}
+
+.sidebar-footer {
+  padding: 20px 24px;
+  border-top: 1px solid #1e293b;
+  font-size: 13px;
+}
+
+.admin-main {
+  flex: 1;
+  margin-left: 260px;
+  padding: 40px;
+  background-color: var(--admin-bg-light);
+}
+
+@media (max-width: 900px) {
+  .admin-sidebar {
+    width: 60px;
+  }
+  .sidebar-header, .sidebar-footer, .sidebar-item span {
+    display: none;
+  }
+  .admin-main {
+    margin-left: 60px;
+  }
+}
+
+/* ==========================================
+   3. PAGES & GRID SYSTEMS
+   ========================================== */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 1px solid var(--admin-border);
+  padding-bottom: 15px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Metric Cards */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.metric-card {
+  background-color: var(--admin-bg-white);
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--admin-text-muted);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.metric-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* ==========================================
+   4. DATA TABLES
+   ========================================== */
+.table-card {
+  background-color: var(--admin-bg-white);
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.table-search-bar {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--admin-border);
+  display: flex;
+  gap: 16px;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-table th {
+  background-color: #f8fafc;
+  padding: 14px 24px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--admin-text-muted);
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-table td {
+  padding: 14px 24px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ==========================================
+   5. BUTTONS AND BADGES
+   ========================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background-color: var(--admin-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--admin-primary-hover);
+}
+
+.btn-secondary {
+  background-color: #e2e8f0;
+  color: #334155;
+}
+
+.btn-secondary:hover {
+  background-color: #cbd5e1;
+}
+
+.btn-danger {
+  background-color: var(--admin-danger);
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #b91c1c;
+}
+
+.action-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+/* Form Controls */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.form-input {
+  padding: 10px 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--admin-primary);
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--admin-primary);
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+/* ==========================================
+   6. CUSTOM VISUAL CHARTS (CSS/SVG)
+   ========================================== */
+.charts-container {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.chart-card {
+  background-color: var(--admin-bg-white);
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  padding: 24px;
+}
+
+.chart-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 24px;
+}
+
+/* Flat Bar Chart */
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  height: 200px;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.bar-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.bar-pill {
+  width: 100%;
+  background-color: var(--admin-primary);
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  transition: height 0.5s ease;
+  min-height: 4px;
+}
+
+.bar-value {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--admin-text);
+}
+
+.bar-label {
+  font-size: 11px;
+  color: var(--admin-text-muted);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Pie List Distribution Chart */
+.dist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dist-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dist-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 550;
+}
+
+.dist-bar-bg {
+  height: 8px;
+  background-color: #f1f5f9;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.dist-bar-fill {
+  height: 100%;
+  background-color: var(--admin-primary);
+  border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .charts-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================
+   7. MODAL STYLINGS
+   ========================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 23, 42, 0.6);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.modal-content {
+  background-color: var(--admin-bg-white);
+  border-radius: 6px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--admin-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--admin-text-muted);
+}
+
+.modal-close:hover {
+  color: var(--admin-text);
+}
+
+.modal-body {
+  padding: 24px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--admin-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background-color: #f8fafc;
+}
