@@ -30,7 +30,17 @@ app.use(express.json());
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Successfully connected to MongoDB Atlas'))
-  .catch((err) => console.error('Error connecting to MongoDB:', err));
+  .catch((err) => {
+    console.error('Error connecting to MongoDB:', err);
+    if (err.name === 'MongooseServerSelectionError') {
+      console.error('\n========================================================================');
+      console.error('CRITICAL ERROR: Could not connect to any servers in your MongoDB Atlas cluster.');
+      console.error('One common reason is that your current IP address is not whitelisted.');
+      console.error('Please whitelist your current public IP address in your MongoDB Atlas dashboard:');
+      console.error('https://cloud.mongodb.com/ -> Network Access -> Add IP Address');
+      console.error('========================================================================\n');
+    }
+  });
 
 // ==========================================
 // 1. AUTHENTICATION & SETTINGS ROUTES
@@ -484,7 +494,7 @@ app.get('/api/testimonials', async (req, res) => {
   }
 });
 
-app.post('/api/testimonials', auth, async (req, res) => {
+app.post('/api/testimonials', async (req, res) => {
   const { customerName, companyName, reviewText, rating } = req.body;
   if (!customerName || !companyName || !reviewText || !rating) {
     return res.status(400).json({ message: 'All fields are required.' });

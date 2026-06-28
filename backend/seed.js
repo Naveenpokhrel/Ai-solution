@@ -272,6 +272,14 @@ const seedDatabase = async () => {
     process.exit(0);
   } catch (error) {
     console.error("Error seeding database:", error);
+    if (error.name === 'MongooseServerSelectionError') {
+      console.error('\n========================================================================');
+      console.error('CRITICAL ERROR: Could not connect to any servers in your MongoDB Atlas cluster.');
+      console.error('One common reason is that your current IP address is not whitelisted.');
+      console.error('Please whitelist your current public IP address in your MongoDB Atlas dashboard:');
+      console.error('https://cloud.mongodb.com/ -> Network Access -> Add IP Address');
+      console.error('========================================================================\n');
+    }
     process.exit(1);
   }
 };
