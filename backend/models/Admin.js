@@ -18,11 +18,40 @@ const adminSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
+  },
+  Full_name: {
+    type: String,
+    default: "Admin User",
+    trim: true
+  },
+  full_name: {
+    type: String,
+    default: "Admin User",
+    trim: true
+  },
+  role: {
+    type: String,
+    default: "Admin",
+    trim: true
   }
 }, { timestamps: true });
 
-// Hash password before saving
+// Add virtual field to map _id to admin_id for ERD alignment
+adminSchema.virtual('admin_id').get(function() {
+  return this._id;
+});
+
+adminSchema.set('toJSON', { virtuals: true });
+adminSchema.set('toObject', { virtuals: true });
+
+// Hash password and sync full_name before saving
 adminSchema.pre('save', async function (next) {
+  if (this.full_name && !this.Full_name) {
+    this.Full_name = this.full_name;
+  } else if (this.Full_name && !this.full_name) {
+    this.full_name = this.Full_name;
+  }
+
   if (!this.isModified('password')) return next();
   try {
     const salt = await bcrypt.genSalt(10);

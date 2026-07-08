@@ -41,4 +41,12 @@ const articleSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
+// Add virtual field to map _id to article_id for ERD alignment
+articleSchema.virtual('article_id').get(function() {
+  return this._id;
+});
+
+articleSchema.set('toJSON', { virtuals: true });
+articleSchema.set('toObject', { virtuals: true });
+
 export default mongoose.model('Article', articleSchema);

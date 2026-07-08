@@ -13,6 +13,9 @@ import Article from './models/Article.js';
 import Event from './models/Event.js';
 import Gallery from './models/Gallery.js';
 import Testimonial from './models/Testimonial.js';
+import EnquiryReport from './models/EnquiryReport.js';
+import ChatbotLog from './models/ChatbotLog.js';
+import AdminLoginLog from './models/AdminLoginLog.js';
 
 // Auth Middleware
 import { auth } from './middleware/auth.js';
@@ -66,6 +69,20 @@ app.post('/api/auth/login', async (req, res) => {
     }
 
     const token = jwt.sign({ id: admin._id }, JWT_SECRET, { expiresIn: '24h' });
+
+    // Log successful admin login
+    try {
+      const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+      const loginLog = new AdminLoginLog({
+        admin_id: admin._id,
+        captcha_status: req.body.captchaStatus || "Passed", // default to "Passed" if captcha is not explicitly checked
+        ip_address: clientIp
+      });
+      await loginLog.save();
+    } catch (logErr) {
+      console.error('Failed to write admin login log:', logErr);
+    }
+
     res.json({
       token,
       admin: {
@@ -136,6 +153,18 @@ app.post('/api/inquiries', async (req, res) => {
       jobDetails
     });
     await newInquiry.save();
+
+    // Automatically create an EnquiryReport for this inquiry
+    try {
+      const report = new EnquiryReport({
+        enquiry_id: newInquiry._id,
+        notes: `Automated report generated on inquiry submission from ${name} (${email}).`
+      });
+      await report.save();
+    } catch (reportErr) {
+      console.error('Failed to auto-create EnquiryReport:', reportErr);
+    }
+
     res.status(201).json({ message: 'Inquiry submitted successfully.', data: newInquiry });
   } catch (err) {
     res.status(500).json({ message: 'Error submitting inquiry', error: err.message });
@@ -252,7 +281,7 @@ app.delete('/api/solutions/:id', auth, async (req, res) => {
 
 app.get('/api/projects', async (req, res) => {
   try {
-    const projects = await Project.find().sort({ createdAt: -1 });
+    const projects = await Project.find().populate('service_id').sort({ createdAt: -1 });
     res.json(projects);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching projects', error: err.message });
@@ -260,34 +289,49 @@ app.get('/api/projects', async (req, res) => {
 });
 
 app.post('/api/projects', auth, async (req, res) => {
-  const { title, description, imageUrl, clientName, date, details } = req.body;
+  const { title, service_id, industry, description, imageUrl, clientName, date, completion_date, details } = req.body;
   if (!title || !description || !imageUrl) {
     return res.status(400).json({ message: 'Title, description, and image URL are required.' });
   }
   try {
-    const project = new Project({ title, description, imageUrl, clientName, date, details });
+    const project = new Project({
+      title,
+      service_id: service_id || null,
+      industry: industry || 'General',
+      description,
+      imageUrl,
+      clientName,
+      date,
+      completion_date: completion_date || null,
+      details
+    });
     await project.save();
-    res.status(201).json(project);
+    const populated = await Project.findById(project._id).populate('service_id');
+    res.status(201).json(populated);
   } catch (err) {
     res.status(500).json({ message: 'Error creating project', error: err.message });
   }
 });
 
 app.put('/api/projects/:id', auth, async (req, res) => {
-  const { title, description, imageUrl, clientName, date, details } = req.body;
+  const { title, service_id, industry, description, imageUrl, clientName, date, completion_date, details } = req.body;
   try {
     const project = await Project.findById(req.params.id);
     if (!project) return res.status(404).json({ message: 'Project not found.' });
 
-    if (title) project.title = title;
-    if (description) project.description = description;
-    if (imageUrl) project.imageUrl = imageUrl;
-    if (clientName) project.clientName = clientName;
-    if (date) project.date = date;
-    if (details) project.details = details;
+    if (title !== undefined) project.title = title;
+    if (service_id !== undefined) project.service_id = service_id || null;
+    if (industry !== undefined) project.industry = industry || 'General';
+    if (description !== undefined) project.description = description;
+    if (imageUrl !== undefined) project.imageUrl = imageUrl;
+    if (clientName !== undefined) project.clientName = clientName;
+    if (date !== undefined) project.date = date;
+    if (completion_date !== undefined) project.completion_date = completion_date || null;
+    if (details !== undefined) project.details = details;
 
     await project.save();
-    res.json(project);
+    const populated = await Project.findById(project._id).populate('service_id');
+    res.json(populated);
   } catch (err) {
     res.status(500).json({ message: 'Error updating project', error: err.message });
   }
@@ -450,7 +494,7 @@ app.delete('/api/events/:id', auth, async (req, res) => {
 
 app.get('/api/gallery', async (req, res) => {
   try {
-    const galleryItems = await Gallery.find().sort({ createdAt: -1 });
+    const galleryItems = await Gallery.find().populate('eventId').sort({ createdAt: -1 });
     res.json(galleryItems);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching gallery items', error: err.message });
@@ -458,14 +502,15 @@ app.get('/api/gallery', async (req, res) => {
 });
 
 app.post('/api/gallery', auth, async (req, res) => {
-  const { imageUrl, caption, category } = req.body;
+  const { imageUrl, caption, category, eventId } = req.body;
   if (!imageUrl || !caption || !category) {
     return res.status(400).json({ message: 'Image URL, caption, and category are required.' });
   }
   try {
-    const galleryItem = new Gallery({ imageUrl, caption, category });
+    const galleryItem = new Gallery({ imageUrl, caption, category, eventId: eventId || null });
     await galleryItem.save();
-    res.status(201).json(galleryItem);
+    const populated = await Gallery.findById(galleryItem._id).populate('eventId');
+    res.status(201).json(populated);
   } catch (err) {
     res.status(500).json({ message: 'Error uploading gallery item', error: err.message });
   }
@@ -605,7 +650,215 @@ app.get('/api/dashboard/analytics', auth, async (req, res) => {
   }
 });
 
+// ==========================================
+// 8. AI CHATBOT ROUTE
+// ==========================================
+app.post('/api/chat', async (req, res) => {
+  const { messages } = req.body;
+  
+  if (!messages || !Array.isArray(messages)) {
+    return res.status(400).json({ message: 'Messages array is required.' });
+  }
+
+  try {
+    // Fetch dynamic context from Database
+    const solutions = await Solution.find({}, 'title description');
+    const projects = await Project.find({}, 'title description clientName');
+
+    const solutionsContext = solutions.map(s => `- ${s.title}: ${s.description}`).join('\n');
+    const projectsContext = projects.map(p => `- ${p.title} for ${p.clientName}: ${p.description}`).join('\n');
+
+    const systemPrompt = `You are the professional AI Assistant for 'AI-Solutions', a premium software consulting company.
+Use the following database context to answer user queries:
+
+Services/Solutions We Offer:
+${solutionsContext || 'Predictive Analytics, Custom Software, Cybersecurity audits.'}
+
+Recent Projects/Case Studies:
+${projectsContext || 'Smart Logistics Engine, Decentralized Payment API.'}
+
+Contact Office Info:
+- Address: 100 Technology Way, Silicon Valley, CA
+- Email: support@ai-solutions.com
+- Phone: +1 (555) 019-2831
+- Business Hours: Mon - Fri: 9:00 AM - 6:00 PM PST
+
+Guidelines:
+1. Provide accurate, professional, and friendly answers.
+2. Keep your answers concise (strictly under 3 sentences).
+3. If they ask about services or projects, recommend relevant ones and suggest visiting the "Services" or "Projects" pages.
+4. If they want to speak to an engineer, get a quote, or schedule a consultation, recommend filling out the inquiry form on the "Contact Us" page.
+5. If they ask generic questions, align your answers with AI-Solutions' expertise.`;
+
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+      // Intelligent fallback when GEMINI_API_KEY is not defined
+      const lastUserMsg = messages[messages.length - 1]?.text || '';
+      const textLower = lastUserMsg.toLowerCase();
+      let reply = '';
+
+      if (textLower.includes('faq') || textLower.includes('hours') || textLower.includes('location') || textLower.includes('where')) {
+        reply = 'AI-Solutions is open Monday - Friday, 9:00 AM - 6:00 PM PST. Our engineering headquarters is located at 100 Technology Way, Silicon Valley, CA.';
+      } else if (textLower.includes('service') || textLower.includes('solution') || textLower.includes('software') || textLower.includes('build') || textLower.includes('offer')) {
+        const solTitles = solutions.map(s => s.title).join(', ');
+        reply = `We build tailored software architectures. Our services include: ${solTitles || 'Predictive Analytics, Custom Software, and Cybersecurity'}. Please check out our Services page for details!`;
+      } else if (textLower.includes('contact') || textLower.includes('talk') || textLower.includes('phone') || textLower.includes('email') || textLower.includes('inquir')) {
+        reply = 'To speak with a lead engineer or get a consultation quote, please visit our Contact Us page and fill out the inquiry form.';
+      } else if (textLower.includes('project') || textLower.includes('case') || textLower.includes('work') || textLower.includes('done')) {
+        const projTitles = projects.map(p => p.title).join(', ');
+        reply = `We have completed projects such as: ${projTitles || 'Smart Logistics Engine, Decentralized Payment API'}. Check out our Projects page for the full list!`;
+      } else {
+        reply = "Hello! I am the AI-Solutions Assistant. (To enable full AI power, add GEMINI_API_KEY to the backend .env file). How can I help you explore our services, projects, or schedule a consultation today?";
+      }
+
+      // Log chatbot interaction
+      try {
+        const chatLog = new ChatbotLog({
+          user_question: lastUserMsg || "Hello",
+          bot_response: reply
+        });
+        await chatLog.save();
+      } catch (logErr) {
+        console.error('Failed to save chatbot log:', logErr);
+      }
+
+      return res.json({ reply });
+    }
+
+    // Convert messages to Gemini API format (only 'user' or 'model' roles allowed)
+    // Map isBot -> role: 'model' (or 'user')
+    const contents = messages
+      .filter(msg => !msg.isOptions && msg.text) // filter options prompts
+      .map(msg => ({
+        role: msg.isBot ? 'model' : 'user',
+        parts: [{ text: msg.text }]
+      }));
+
+    // If contents array is empty, default it
+    if (contents.length === 0) {
+      contents.push({ role: 'user', parts: [{ text: 'Hello' }] });
+    }
+
+    // Call Gemini API using fetch
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const response = await fetch(geminiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        contents: contents,
+        systemInstruction: {
+          parts: [{ text: systemPrompt }]
+        },
+        generationConfig: {
+          maxOutputTokens: 150,
+          temperature: 0.7
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error('Gemini API Error:', errText);
+      throw new Error(`Gemini API returned status ${response.status}`);
+    }
+
+    const data = await response.json();
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm having trouble processing that right now. Please try again.";
+    const replyText = reply.trim();
+
+    // Log chatbot interaction
+    try {
+      const lastUserMsg = messages[messages.length - 1]?.text || 'Hello';
+      const chatLog = new ChatbotLog({
+        user_question: lastUserMsg,
+        bot_response: replyText
+      });
+      await chatLog.save();
+    } catch (logErr) {
+      console.error('Failed to save chatbot log:', logErr);
+    }
+
+    res.json({ reply: replyText });
+  } catch (err) {
+    console.error('Chat error:', err);
+    res.status(500).json({ message: 'Error communicating with AI Chatbot', error: err.message });
+  }
+});
+
+// ==========================================
+// 10. ADMIN LOGS & REPORTS ROUTES (ADMIN ONLY)
+// ==========================================
+
+// Get admin login logs (Admin only)
+app.get('/api/logs/login', auth, async (req, res) => {
+  try {
+    const logs = await AdminLoginLog.find()
+      .populate('admin_id', 'username email')
+      .sort({ login_time: -1 });
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching login logs', error: err.message });
+  }
+});
+
+// Get chatbot interaction logs (Admin only)
+app.get('/api/logs/chatbot', auth, async (req, res) => {
+  try {
+    const logs = await ChatbotLog.find().sort({ created_at: -1 });
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching chatbot logs', error: err.message });
+  }
+});
+
+// Get all enquiry reports (Admin only)
+app.get('/api/reports/enquiries', auth, async (req, res) => {
+  try {
+    const reports = await EnquiryReport.find()
+      .populate('enquiry_id')
+      .sort({ report_date: -1 });
+    res.json(reports);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching enquiry reports', error: err.message });
+  }
+});
+
+// Create a new enquiry report (Admin only)
+app.post('/api/reports/enquiries', auth, async (req, res) => {
+  const { enquiry_id, notes, inquiry_count } = req.body;
+  if (!enquiry_id) {
+    return res.status(400).json({ message: 'Enquiry ID is required.' });
+  }
+  try {
+    const report = new EnquiryReport({
+      enquiry_id,
+      notes,
+      inquiry_count: inquiry_count || 1
+    });
+    await report.save();
+    const populated = await EnquiryReport.findById(report._id).populate('enquiry_id');
+    res.status(201).json(populated);
+  } catch (err) {
+    res.status(500).json({ message: 'Error creating enquiry report', error: err.message });
+  }
+});
+
+// Delete an enquiry report (Admin only)
+app.delete('/api/reports/enquiries/:id', auth, async (req, res) => {
+  try {
+    const report = await EnquiryReport.findByIdAndDelete(req.params.id);
+    if (!report) return res.status(404).json({ message: 'Enquiry report not found.' });
+    res.json({ message: 'Enquiry report deleted successfully.' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting enquiry report', error: err.message });
+  }
+});
+
 // Start Server
 app.listen(PORT, () => {
   console.log(`Express API Server listening on port ${PORT}`);
 });
+

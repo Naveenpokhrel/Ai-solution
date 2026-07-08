@@ -7,6 +7,7 @@ const API_URL = 'http://localhost:5000/api';
 function App() {
   const [page, setPage] = useState('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   
   // Data State
   const [solutions, setSolutions] = useState([]);
@@ -78,8 +79,9 @@ function App() {
       { _id: '1', title: "Maximizing ROI: Implementing Predictive AI in Retail", description: "How mid-sized retail operations can integrate AI.", content: "Enterprise AI is no longer a luxury. This post outlines how mid-sized retailers use sales forecasting...", imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=400", author: "Sarah Jenkins", category: "Artificial Intelligence", date: new Date().toISOString(), featured: true }
     ]);
     setEvents([
-      { _id: '1', title: "AI-Solutions Annual Tech Expo 2026", description: "Hands-on workshops with core engineers.", date: new Date(Date.now() + 86400000 * 30).toISOString(), location: "Silicon Valley & Online", isPromotional: true },
-      { _id: '2', title: "Cloud Migration Masterclass", description: "Migrate safely while complying with security standards.", date: new Date(Date.now() + 86400000 * 10).toISOString(), location: "Austin, TX", isPromotional: false }
+      { _id: '1', title: "Global Tech Summit 2026", description: "Explore the future of generative AI, serverless systems, and cloud infrastructure. Networking events and live workshops led by industry leaders.", date: new Date('2026-09-10T05:45:00').toISOString(), location: "Silicon Valley Convention Center, CA", isPromotional: true },
+      { _id: '2', title: "Interactive Frontend Hackathon", description: "A 48-hour competitive hacking marathon where developers build outstanding, highly-accessible CSS/React designs with Framer Motion.", date: new Date('2026-11-05T05:45:00').toISOString(), location: "Virtual Event Online", isPromotional: false },
+      { _id: '3', title: "AI-Solutions Annual Tech Expo 2025", description: "Our previous annual technology showcase of emerging AI frameworks.", date: new Date('2025-09-12T09:00:00').toISOString(), location: "Silicon Valley & Online", isPromotional: false }
     ]);
     setGallery([
       { _id: '1', imageUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=400", caption: "2025 AI-Solutions Keynote Summit", category: "Events" },
@@ -118,13 +120,13 @@ function App() {
             <ul className={`nav-list ${mobileMenuOpen ? 'mobile-active' : ''}`} style={mobileMenuOpen ? { display: 'flex', flexDirection: 'column', position: 'absolute', top: '80px', left: 0, width: '100%', backgroundColor: '#ffffff', padding: '20px', borderBottom: '1px solid var(--color-border)', gap: '16px', zIndex: 99 } : {}}>
               <li><span className={`nav-link ${page === 'home' ? 'active' : ''}`} onClick={() => navigateTo('home')}>Home</span></li>
               <li><span className={`nav-link ${page === 'about' ? 'active' : ''}`} onClick={() => navigateTo('about')}>About Us</span></li>
-              <li><span className={`nav-link ${page === 'services' ? 'active' : ''}`} onClick={() => navigateTo('services')}>Services</span></li>
+              <li><span className={`nav-link ${page === 'services' ? 'active' : ''}`} onClick={() => navigateTo('services')}>Solutions</span></li>
               <li><span className={`nav-link ${page === 'projects' ? 'active' : ''}`} onClick={() => navigateTo('projects')}>Projects</span></li>
-              <li><span className={`nav-link ${page === 'blog' ? 'active' : ''}`} onClick={() => navigateTo('blog')}>Blog</span></li>
+              <li><span className={`nav-link ${page === 'blog' ? 'active' : ''}`} onClick={() => navigateTo('blog')}>Article</span></li>
               <li><span className={`nav-link ${page === 'events' ? 'active' : ''}`} onClick={() => navigateTo('events')}>Events</span></li>
               <li><span className={`nav-link ${page === 'gallery' ? 'active' : ''}`} onClick={() => navigateTo('gallery')}>Gallery</span></li>
               <li><span className={`nav-link ${page === 'testimonials' ? 'active' : ''}`} onClick={() => navigateTo('testimonials')}>Testimonials</span></li>
-              <li><span className={`nav-link ${page === 'contact' ? 'active' : ''}`} onClick={() => navigateTo('contact')}>Contact Us</span></li>
+              <li><span className={`nav-link ${page === 'contact' ? 'active' : ''}`} onClick={() => navigateTo('contact')}>Inquiry</span></li>
             </ul>
           </nav>
 
@@ -133,6 +135,12 @@ function App() {
           </button>
         </div>
       </header>
+
+      {/* Toast Alert overlay */}
+      <Toast toast={toast} setToast={setToast} />
+
+      {/* Breadcrumbs Navigation */}
+      <Breadcrumbs page={page} navigateTo={navigateTo} />
 
       {/* PAGE CONTENT ROUTER */}
       <main className="main-content">
@@ -148,13 +156,16 @@ function App() {
           />
         )}
         {page === 'about' && <AboutPage />}
-        {page === 'services' && <ServicesPage solutions={solutions} navigateTo={navigateTo} />}
-        {page === 'projects' && <ProjectsPage projects={projects} />}
-        {page === 'blog' && <BlogPage articles={articles} />}
-        {page === 'events' && <EventsPage events={events} />}
+        {page === 'services' && <ServicesPage solutions={solutions} loading={loading} navigateTo={navigateTo} />}
+        {page === 'projects' && <ProjectsPage projects={projects} loading={loading} />}
+        {page === 'blog' && <BlogPage articles={articles} loading={loading} />}
+        {page === 'events' && <EventsPage events={events} gallery={gallery} />}
         {page === 'gallery' && <GalleryPage gallery={gallery} />}
-        {page === 'testimonials' && <TestimonialsPage testimonials={testimonials} setTestimonials={setTestimonials} />}
-        {page === 'contact' && <ContactPage />}
+        {page === 'testimonials' && <TestimonialsPage testimonials={testimonials} setTestimonials={setTestimonials} setToast={setToast} />}
+        {page === 'contact' && <ContactPage setToast={setToast} />}
+        {page === '404' && <Error404Page navigateTo={navigateTo} />}
+        {page === '403' && <Error403Page navigateTo={navigateTo} />}
+        {page === '500' && <Error500Page navigateTo={navigateTo} />}
       </main>
 
       {/* FLOATING AI CHATBOT WIDGET */}
@@ -171,7 +182,7 @@ function App() {
               <p>Engineering premium digital architectures, enterprise automation systems, and state-of-the-art software solutions tailored to power scaling organizations.</p>
             </div>
             <div>
-              <h3 className="footer-col-title">Navigation</h3>
+              <h3 className="footer-col-title">Quick Links</h3>
               <ul className="footer-links">
                 <li><span style={{ cursor: 'pointer' }} onClick={() => navigateTo('home')}>Home</span></li>
                 <li><span style={{ cursor: 'pointer' }} onClick={() => navigateTo('about')}>About Us</span></li>
@@ -180,11 +191,11 @@ function App() {
               </ul>
             </div>
             <div>
-              <h3 className="footer-col-title">Connect</h3>
+              <h3 className="footer-col-title">System Status</h3>
               <ul className="footer-links">
-                <li><span style={{ cursor: 'pointer' }} onClick={() => navigateTo('blog')}>Tech Articles</span></li>
-                <li><span style={{ cursor: 'pointer' }} onClick={() => navigateTo('events')}>Events & Expos</span></li>
-                <li><span style={{ cursor: 'pointer' }} onClick={() => navigateTo('gallery')}>Media Gallery</span></li>
+                <li><span style={{ cursor: 'pointer' }} onClick={() => navigateTo('404')}>404 Error Page</span></li>
+                <li><span style={{ cursor: 'pointer' }} onClick={() => navigateTo('403')}>403 Forbidden Page</span></li>
+                <li><span style={{ cursor: 'pointer' }} onClick={() => navigateTo('500')}>500 Internal Error</span></li>
               </ul>
             </div>
             <div>
@@ -198,7 +209,7 @@ function App() {
             </div>
           </div>
           <div className="footer-bottom">
-            <p>&copy; {new Date().getFullYear()} AI-Solutions. All Rights Reserved.</p>
+            <p>&copy; {new Date().getFullYear()} AI-Solutions. All Rights Reserved. | <span style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => alert("Privacy Policy: All client consultation data is encrypted.")}>Privacy Policy</span> | <span style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => alert("Terms of Service: Development deliverables comply with standard specifications.")}>Terms of Service</span></p>
             <p>Designed in flat, modern corporate style.</p>
           </div>
         </div>
@@ -456,8 +467,14 @@ function AboutPage() {
 // ==========================================
 // 3. SERVICES PAGE
 // ==========================================
-function ServicesPage({ solutions, navigateTo }) {
+function ServicesPage({ solutions, loading, navigateTo }) {
   const [selectedSolution, setSelectedSolution] = useState(null);
+  const [search, setSearch] = useState('');
+
+  const filtered = solutions.filter(sol => 
+    sol.title.toLowerCase().includes(search.toLowerCase()) || 
+    sol.description.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="section">
@@ -467,19 +484,43 @@ function ServicesPage({ solutions, navigateTo }) {
           <p className="section-subtitle">We design, build, and deploy systems following strict engineering standards.</p>
         </div>
 
-        <div className="card-grid">
-          {solutions.map((sol) => (
-            <div key={sol._id} className="card" style={{ display: 'flex', flexDirection: 'column' }}>
-              <div className="card-icon">💻</div>
-              <h3 className="card-title">{sol.title}</h3>
-              <p className="card-desc" style={{ flexGrow: 1 }}>{sol.description}</p>
-              <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
-                <button className="btn btn-secondary" style={{ flex: 1 }} onClick={() => setSelectedSolution(sol)}>Learn More</button>
-                <button className="btn btn-primary" onClick={() => navigateTo('contact')}>Inquire</button>
-              </div>
-            </div>
-          ))}
+        {/* Search bar */}
+        <div className="search-bar" style={{ marginBottom: '30px', display: 'flex', justifyContent: 'center' }}>
+          <input 
+            type="text" 
+            placeholder="Search our solutions..." 
+            className="search-input" 
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ width: '100%', maxWidth: '400px' }}
+          />
         </div>
+
+        {loading ? (
+          <div className="card-grid">
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        ) : filtered.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-muted)', fontSize: '15px' }}>
+            🔍 No solutions match your query. Try searching for other terms like "analytics" or "custom".
+          </div>
+        ) : (
+          <div className="card-grid">
+            {filtered.map((sol) => (
+              <div key={sol._id} className="card" style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="card-icon">💻</div>
+                <h3 className="card-title">{sol.title}</h3>
+                <p className="card-desc" style={{ flexGrow: 1 }}>{sol.description}</p>
+                <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
+                  <button className="btn btn-secondary" style={{ flex: 1 }} onClick={() => setSelectedSolution(sol)}>Learn More</button>
+                  <button className="btn btn-primary" onClick={() => navigateTo('contact')}>Inquire</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* SERVICE DETAILS DIALOG / MODAL */}
@@ -514,7 +555,25 @@ function ServicesPage({ solutions, navigateTo }) {
 // ==========================================
 // 4. PROJECTS / CASE STUDIES PAGE
 // ==========================================
-function ProjectsPage({ projects }) {
+function ProjectsPage({ projects, loading }) {
+  const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const limit = 3;
+
+  const filtered = projects.filter(proj => 
+    proj.title.toLowerCase().includes(search.toLowerCase()) || 
+    proj.description.toLowerCase().includes(search.toLowerCase()) ||
+    proj.clientName.toLowerCase().includes(search.toLowerCase())
+  );
+
+  // Reset page when search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
+  const totalPages = Math.ceil(filtered.length / limit);
+  const paginatedProjects = filtered.slice((currentPage - 1) * limit, currentPage * limit);
+
   return (
     <div className="section">
       <div className="container">
@@ -523,27 +582,74 @@ function ProjectsPage({ projects }) {
           <p className="section-subtitle">Discover how we help organizations overcome technical hurdles and optimize resources.</p>
         </div>
 
-        <div className="card-grid">
-          {projects.map((proj) => (
-            <div key={proj._id} className="project-card" style={{ display: 'flex', flexDirection: 'column' }}>
-              <img src={proj.imageUrl} alt={proj.title} className="project-img" />
-              <div className="project-body" style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                <div className="project-meta">
-                  <span>Client: <strong>{proj.clientName}</strong></span>
-                  <span>{proj.date}</span>
-                </div>
-                <h3 className="project-title" style={{ fontSize: '18px' }}>{proj.title}</h3>
-                <p className="project-desc" style={{ flexGrow: 1 }}>{proj.description}</p>
-                
-                {proj.details && (
-                  <div style={{ marginTop: '15px', padding: '12px', backgroundColor: 'var(--color-bg-light)', borderLeft: '3px solid var(--color-accent)', fontSize: '13px', fontStyle: 'italic', marginBottom: '15px' }}>
-                    {proj.details}
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
+        {/* Search filter */}
+        <div className="search-bar" style={{ marginBottom: '30px', display: 'flex', justifyContent: 'center' }}>
+          <input 
+            type="text" 
+            placeholder="Search case studies..." 
+            className="search-input" 
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ width: '100%', maxWidth: '400px' }}
+          />
         </div>
+
+        {loading ? (
+          <div className="card-grid">
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        ) : filtered.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-muted)', fontSize: '15px' }}>
+            📂 No case studies match your query. Try searching for "logistics" or "payment".
+          </div>
+        ) : (
+          <>
+            <div className="card-grid">
+              {paginatedProjects.map((proj) => (
+                <div key={proj._id} className="project-card" style={{ display: 'flex', flexDirection: 'column' }}>
+                  <img src={proj.imageUrl} alt={proj.title} className="project-img" />
+                  <div className="project-body" style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                    <div className="project-meta">
+                      <span>Client: <strong>{proj.clientName}</strong></span>
+                      <span>{proj.date}</span>
+                    </div>
+                    <h3 className="project-title" style={{ fontSize: '18px' }}>{proj.title}</h3>
+                    <p className="project-desc" style={{ flexGrow: 1 }}>{proj.description}</p>
+                    
+                    {proj.details && (
+                      <div style={{ marginTop: '15px', padding: '12px', backgroundColor: 'var(--color-bg-light)', borderLeft: '3px solid var(--color-accent)', fontSize: '13px', fontStyle: 'italic', marginBottom: '15px' }}>
+                        {proj.details}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination controls */}
+            {totalPages > 1 && (
+              <div className="pagination-bar">
+                <button 
+                  className="btn btn-secondary btn-sm" 
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                >
+                  ◀ Prev
+                </button>
+                <span className="pagination-info">Page {currentPage} of {totalPages}</span>
+                <button 
+                  className="btn btn-secondary btn-sm" 
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                >
+                  Next ▶
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
@@ -552,10 +658,15 @@ function ProjectsPage({ projects }) {
 // ==========================================
 // 5. ARTICLES & BLOGS PAGE
 // ==========================================
-function BlogPage({ articles }) {
+// ==========================================
+// 5. ARTICLES & BLOGS PAGE
+// ==========================================
+function BlogPage({ articles, loading }) {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [readingArticle, setReadingArticle] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const limit = 3;
 
   const categories = ['All', 'Artificial Intelligence', 'Cybersecurity', 'DevOps'];
 
@@ -567,6 +678,14 @@ function BlogPage({ articles }) {
     const matchesCategory = selectedCategory === 'All' || art.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  // Reset page when search or category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedCategory]);
+
+  const totalPages = Math.ceil(filteredArticles.length / limit);
+  const paginatedArticles = filteredArticles.slice((currentPage - 1) * limit, currentPage * limit);
 
   const featuredArticle = articles.find(art => art.featured) || articles[0];
 
@@ -601,36 +720,80 @@ function BlogPage({ articles }) {
           ))}
         </div>
 
-        {/* FEATURED ARTICLE (Show only if category is 'All' and search is empty) */}
-        {featuredArticle && !search && selectedCategory === 'All' && (
-          <div className="featured-blog">
-            <img src={featuredArticle.imageUrl} alt={featuredArticle.title} className="featured-blog-img" />
-            <div className="featured-blog-body">
-              <span className="blog-category">Featured // {featuredArticle.category}</span>
-              <h2 className="blog-title">{featuredArticle.title}</h2>
-              <p className="blog-desc">{featuredArticle.description}</p>
-              <div className="blog-meta" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>By {featuredArticle.author}</span>
-                <button className="btn btn-primary" onClick={() => setReadingArticle(featuredArticle)}>Read Full Post</button>
-              </div>
-            </div>
+        {loading ? (
+          <div className="card-grid">
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
           </div>
-        )}
-
-        {/* ARTICLES LIST GRID */}
-        <div className="card-grid">
-          {filteredArticles.map((art) => (
-            <div key={art._id} className="card" style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer' }} onClick={() => setReadingArticle(art)}>
-              <span className="blog-category">{art.category}</span>
-              <h3 className="card-title" style={{ fontSize: '18px' }}>{art.title}</h3>
-              <p className="card-desc" style={{ flexGrow: 1 }}>{art.description}</p>
-              <div className="blog-meta" style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                <span>By {art.author.split(' (')[0]}</span>
-                <span>{new Date(art.date).toLocaleDateString()}</span>
+        ) : filteredArticles.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-muted)', fontSize: '15px' }}>
+            ✍ No articles match your search or category selection. Try a different query.
+          </div>
+        ) : (
+          <>
+            {/* FEATURED ARTICLE (Show only if category is 'All' and search is empty and page is 1) */}
+            {featuredArticle && !search && selectedCategory === 'All' && currentPage === 1 && (
+              <div className="featured-blog">
+                <img src={featuredArticle.imageUrl} alt={featuredArticle.title} className="featured-blog-img" />
+                <div className="featured-blog-body">
+                  <span className="blog-category">Featured // {featuredArticle.category}</span>
+                  <h2 className="blog-title">{featuredArticle.title}</h2>
+                  <p className="blog-desc">{featuredArticle.description}</p>
+                  <div style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginBottom: '15px', display: 'flex', gap: '15px' }}>
+                    <span>⏱ {Math.ceil(featuredArticle.content.split(' ').length / 200)} min read</span>
+                  </div>
+                  <div className="blog-meta" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>By {featuredArticle.author}</span>
+                    <button className="btn btn-primary" onClick={() => setReadingArticle(featuredArticle)}>Read Full Post</button>
+                  </div>
+                </div>
               </div>
+            )}
+
+            {/* ARTICLES LIST GRID */}
+            <div className="card-grid">
+              {paginatedArticles.map((art) => {
+                const readTime = Math.ceil(art.content.split(' ').length / 200);
+                return (
+                  <div key={art._id} className="card" style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer' }} onClick={() => setReadingArticle(art)}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+                      <span className="blog-category" style={{ margin: 0 }}>{art.category}</span>
+                      <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', fontWeight: '600' }}>⏱ {readTime} min read</span>
+                    </div>
+                    <h3 className="card-title" style={{ fontSize: '18px' }}>{art.title}</h3>
+                    <p className="card-desc" style={{ flexGrow: 1 }}>{art.description}</p>
+                    <div className="blog-meta" style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                      <span>By {art.author.split(' (')[0]}</span>
+                      <span>{new Date(art.date).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          ))}
-        </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="pagination-bar" style={{ marginTop: '40px' }}>
+                <button 
+                  className="btn btn-secondary btn-sm" 
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                >
+                  ◀ Prev
+                </button>
+                <span className="pagination-info">Page {currentPage} of {totalPages}</span>
+                <button 
+                  className="btn btn-secondary btn-sm" 
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                >
+                  Next ▶
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* READING ARTICLE MODAL */}
@@ -641,9 +804,10 @@ function BlogPage({ articles }) {
             <div className="modal-body" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
               <span className="blog-category" style={{ display: 'block', marginBottom: '8px' }}>{readingArticle.category}</span>
               <h2 className="blog-title" style={{ fontSize: '26px', lineHeight: '1.3' }}>{readingArticle.title}</h2>
-              <div style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '20px', display: 'flex', gap: '15px' }}>
+              <div style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '20px', display: 'flex', gap: '20px' }}>
                 <span>Author: <strong>{readingArticle.author}</strong></span>
                 <span>Date: {new Date(readingArticle.date).toLocaleDateString()}</span>
+                <span>⏱ Read Time: <strong>{Math.ceil(readingArticle.content.split(' ').length / 200)} min read</strong></span>
               </div>
               <img src={readingArticle.imageUrl} alt={readingArticle.title} style={{ width: '100%', maxHeight: '350px', objectFit: 'cover', borderRadius: '4px', marginBottom: '25px', border: '1px solid var(--color-border)' }} />
               <div style={{ fontSize: '15px', color: 'var(--color-text)', lineHeight: '1.8', whiteSpace: 'pre-line' }}>
@@ -663,46 +827,303 @@ function BlogPage({ articles }) {
 // ==========================================
 // 6. EVENTS PAGE
 // ==========================================
-function EventsPage({ events }) {
+function EventsPage({ events, gallery }) {
+  const [activeTab, setActiveTab] = useState('upcoming');
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [viewingImagesEvent, setViewingImagesEvent] = useState(null);
+  const [eventImages, setEventImages] = useState([]);
+  const [activeDetailImage, setActiveDetailImage] = useState(null);
+
+  const now = new Date();
+  // Filter events based on date
+  const upcomingEvents = events.filter(evt => new Date(evt.date) >= now);
+  const pastEvents = events.filter(evt => new Date(evt.date) < now);
+
+  const displayedEvents = activeTab === 'upcoming' ? upcomingEvents : pastEvents;
+
+  const handleViewImages = (evt) => {
+    const imgs = gallery.filter(item => {
+      if (!item.eventId) return false;
+      const id = typeof item.eventId === 'object' ? item.eventId._id : item.eventId;
+      return id === evt._id;
+    });
+    setEventImages(imgs);
+    setViewingImagesEvent(evt);
+  };
+
+  const pad = (num) => String(num).padStart(2, '0');
+
   return (
     <div className="section">
       <div className="container">
-        <div className="section-title-wrapper">
-          <h1 className="section-title">Corporate Conferences & Technical Seminars</h1>
-          <p className="section-subtitle">Engage with our core engineering panels and learn about secure system migrations.</p>
+        {/* Toggle tabs at top */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '40px' }}>
+          <div className="event-filter-container">
+            <button 
+              className={`event-filter-btn ${activeTab === 'upcoming' ? 'active' : ''}`}
+              onClick={() => setActiveTab('upcoming')}
+            >
+              Upcoming ({upcomingEvents.length})
+            </button>
+            <button 
+              className={`event-filter-btn ${activeTab === 'past' ? 'active' : ''}`}
+              onClick={() => setActiveTab('past')}
+            >
+              Past Events ({pastEvents.length})
+            </button>
+          </div>
         </div>
 
-        <div className="events-list">
-          {events.map((evt) => {
-            const d = new Date(evt.date);
-            const day = d.getDate();
-            const month = d.toLocaleString('default', { month: 'short' });
-            const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            return (
-              <div key={evt._id} className="event-card">
-                <div className="event-date-badge">
-                  <div className="event-date-day">{day}</div>
-                  <div className="event-date-month">{month}</div>
-                </div>
-                <div>
-                  <h3 className="event-content-title">
-                    {evt.title} 
-                    {evt.isPromotional && <span className="badge badge-promotional" style={{ marginLeft: '10px' }}>Promo Event</span>}
-                  </h3>
-                  <p style={{ color: 'var(--color-text-muted)', fontSize: '14px', marginBottom: '10px' }}>{evt.description}</p>
-                  <div style={{ display: 'flex', gap: '20px', fontSize: '13px', color: 'var(--color-text)' }}>
-                    <span>📍 {evt.location}</span>
-                    <span>⌚ Time: {time}</span>
+        {displayedEvents.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-muted)', fontSize: '15px' }}>
+            📅 No {activeTab} events scheduled at this time.
+          </div>
+        ) : (
+          <div className="events-grid">
+            {displayedEvents.map((evt) => {
+              const d = new Date(evt.date);
+              const day = d.getDate();
+              const month = d.toLocaleString('default', { month: 'short' });
+              const time = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+              // Determine event banner image (fallback if not specified in database)
+              const eventImg = evt.image || (
+                evt.title.toLowerCase().includes('expo') || evt.title.toLowerCase().includes('summit') || evt.isPromotional
+                  ? "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=600"
+                  : evt.title.toLowerCase().includes('hackathon') || evt.title.toLowerCase().includes('dev')
+                  ? "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=600"
+                  : "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=600"
+              );
+
+              return (
+                <div key={evt._id} className="event-card">
+                  <div className="event-image-container">
+                    <img src={eventImg} alt={evt.title} className="event-card-img" />
+                    <div className="event-date-badge-overlay">
+                      <div className="event-date-badge-day">{day}</div>
+                      <div className="event-date-badge-month">{month}</div>
+                    </div>
+                    {evt.isPromotional && (
+                      <div className="event-promotional-badge">
+                        ⭐ Promotional / Featured
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="event-card-body">
+                    <h3 className={`event-card-title ${evt.isPromotional ? 'promotional' : 'standard'}`}>
+                      {evt.title}
+                    </h3>
+                    <p className="event-card-desc">{evt.description}</p>
+                    
+                    <div className="event-card-actions">
+                      <button className="event-action-link primary" onClick={() => setSelectedEvent(evt)}>
+                        View Details →
+                      </button>
+                      <button className="event-action-link secondary" onClick={() => handleViewImages(evt)}>
+                        View All Images
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="event-card-footer">
+                    <div className="event-footer-item">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-accent)' }}>
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                      </svg>
+                      <span>{evt.location}</span>
+                    </div>
+                    <div className="event-footer-item">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-accent)' }}>
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                      <span>Time: {time}</span>
+                    </div>
                   </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <a href={`mailto:events@ai-solutions.com?subject=Registration for ${evt.title}`} className="btn btn-primary" style={{ textDecoration: 'none', color: '#ffffff' }}>Register</a>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
+
+      {/* EVENT DETAIL OVERLAY MODAL */}
+      {selectedEvent && (() => {
+        const relatedImages = gallery.filter(item => {
+          if (!item.eventId) return false;
+          const id = typeof item.eventId === 'object' ? item.eventId._id : item.eventId;
+          return id === selectedEvent._id;
+        });
+        return (
+          <div className="modal-overlay" onClick={() => setSelectedEvent(null)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '600px', width: '90%' }}>
+              <div className="modal-header">
+                <h3 style={{ fontSize: '18px', fontWeight: '700' }}>Event Details</h3>
+                <button type="button" className="modal-close" onClick={() => setSelectedEvent(null)}>×</button>
+              </div>
+              <div className="modal-body" style={{ padding: '24px', maxHeight: '75vh', overflowY: 'auto' }}>
+                <div style={{ position: 'relative', height: '220px', borderRadius: '8px', overflow: 'hidden', marginBottom: '20px' }}>
+                  <img 
+                    src={
+                      selectedEvent.image || (
+                        selectedEvent.title.toLowerCase().includes('expo') || selectedEvent.title.toLowerCase().includes('summit') || selectedEvent.isPromotional
+                          ? "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=600"
+                          : selectedEvent.title.toLowerCase().includes('hackathon') || selectedEvent.title.toLowerCase().includes('dev')
+                          ? "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=600"
+                          : "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=600"
+                      )
+                    } 
+                    alt={selectedEvent.title} 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  />
+                  {selectedEvent.isPromotional && (
+                    <div className="event-promotional-badge" style={{ top: '12px', right: '12px' }}>
+                      ⭐ Promotional / Featured
+                    </div>
+                  )}
+                </div>
+                
+                <h2 style={{ fontSize: '22px', fontWeight: '700', color: 'var(--color-primary)', marginBottom: '16px' }}>
+                  {selectedEvent.title}
+                </h2>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px', padding: '16px', backgroundColor: 'var(--color-bg-light)', borderRadius: '8px', fontSize: '14px' }}>
+                  <div>
+                    <strong style={{ display: 'block', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Date</strong>
+                    📅 {new Date(selectedEvent.date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                  </div>
+                  <div>
+                    <strong style={{ display: 'block', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Time</strong>
+                    ⏰ {`${pad(new Date(selectedEvent.date).getHours())}:${pad(new Date(selectedEvent.date).getMinutes())}`}
+                  </div>
+                  <div style={{ gridColumn: 'span 2' }}>
+                    <strong style={{ display: 'block', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Location / Medium</strong>
+                    📍 {selectedEvent.location}
+                  </div>
+                </div>
+                
+                <div style={{ fontSize: '15px', color: 'var(--color-text)', lineHeight: '1.6' }}>
+                  <strong style={{ display: 'block', marginBottom: '8px', color: 'var(--color-primary)' }}>About the Event</strong>
+                  <p style={{ whiteSpace: 'pre-line' }}>{selectedEvent.description}</p>
+                </div>
+
+                {/* Related Event Images */}
+                {relatedImages.length > 0 && (
+                  <div style={{ marginTop: '24px', borderTop: '1px solid var(--color-border)', paddingTop: '20px' }}>
+                    <strong style={{ display: 'block', marginBottom: '12px', color: 'var(--color-primary)', fontSize: '15px' }}>
+                      🖼️ Related Event Images ({relatedImages.length})
+                    </strong>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '12px' }}>
+                      {relatedImages.map((img) => (
+                        <div 
+                          key={img._id} 
+                          style={{ 
+                            borderRadius: '6px', 
+                            overflow: 'hidden', 
+                            border: '1px solid var(--color-border)', 
+                            backgroundColor: 'var(--color-bg-light)',
+                            cursor: 'pointer',
+                            position: 'relative'
+                          }}
+                          onClick={() => setActiveDetailImage(img)}
+                          className="modal-gallery-img-wrapper"
+                        >
+                          <div style={{ height: '90px', overflow: 'hidden' }}>
+                            <img 
+                              src={img.imageUrl} 
+                              alt={img.caption} 
+                              style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'cover',
+                                transition: 'transform 0.3s ease'
+                              }} 
+                              className="modal-gallery-thumbnail"
+                            />
+                          </div>
+                          <div style={{ 
+                            padding: '6px', 
+                            fontSize: '11px', 
+                            color: 'var(--color-text)', 
+                            whiteSpace: 'nowrap', 
+                            overflow: 'hidden', 
+                            textOverflow: 'ellipsis',
+                            textAlign: 'center',
+                            fontWeight: '500'
+                          }}>
+                            {img.caption}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="modal-footer" style={{ borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'flex-end', padding: '16px 24px' }}>
+                <a 
+                  href={`mailto:events@ai-solutions.com?subject=Registration for ${selectedEvent.title}`} 
+                  className="btn btn-primary" 
+                  style={{ textDecoration: 'none', color: '#ffffff' }}
+                >
+                  Register via Email
+                </a>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* LIGHTBOX FOR EVENT DETAIL IMAGES */}
+      {activeDetailImage && (
+        <div className="modal-overlay" onClick={() => setActiveDetailImage(null)} style={{ zIndex: 1100 }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', width: '90%' }}>
+            <button className="modal-close-btn" onClick={() => setActiveDetailImage(null)}>×</button>
+            <div className="modal-body" style={{ padding: '20px', textAlign: 'center' }}>
+              <img src={activeDetailImage.imageUrl} alt={activeDetailImage.caption} style={{ width: '100%', maxHeight: '70vh', objectFit: 'contain', borderRadius: '4px', border: '1px solid var(--color-border)' }} />
+              <div style={{ marginTop: '15px', fontWeight: '500', fontSize: '15px', color: 'var(--color-primary)' }}>
+                {activeDetailImage.caption}
+              </div>
+              <div style={{ color: 'var(--color-accent)', fontSize: '12px', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                Category: {activeDetailImage.category}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* EVENT SPECIFIC IMAGES LIGHTBOX/MODAL */}
+      {viewingImagesEvent && (
+        <div className="modal-overlay" onClick={() => { setViewingImagesEvent(null); setEventImages([]); }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', width: '90%' }}>
+            <div className="modal-header">
+              <h3 style={{ fontSize: '18px', fontWeight: '700' }}>Event Gallery: {viewingImagesEvent.title}</h3>
+              <button type="button" className="modal-close" onClick={() => { setViewingImagesEvent(null); setEventImages([]); }}>×</button>
+            </div>
+            <div className="modal-body" style={{ padding: '24px', maxHeight: '70vh', overflowY: 'auto' }}>
+              {eventImages.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-muted)', fontSize: '15px' }}>
+                  🖼️ No images have been uploaded for this event yet.
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
+                  {eventImages.map((img) => (
+                    <div key={img._id} style={{ borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-light)' }}>
+                      <div style={{ height: '160px', overflow: 'hidden' }}>
+                        <img src={img.imageUrl} alt={img.caption} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </div>
+                      <div style={{ padding: '12px', fontSize: '13px', fontWeight: '500', color: 'var(--color-text)' }}>
+                        {img.caption}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -710,19 +1131,32 @@ function EventsPage({ events }) {
 // ==========================================
 // 7. GALLERY PAGE
 // ==========================================
-function GalleryPage({ gallery }) {
+// ==========================================
+// 7. GALLERY PAGE
+// ==========================================
+function GalleryPage({ gallery, loading }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [activeImage, setActiveImage] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const limit = 4;
 
   const categories = ['All', 'Events', 'Office', 'Projects'];
 
   const filteredGallery = gallery.filter(item => selectedCategory === 'All' || item.category === selectedCategory);
 
+  // Reset page when category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory]);
+
+  const totalPages = Math.ceil(filteredGallery.length / limit);
+  const paginatedGallery = filteredGallery.slice((currentPage - 1) * limit, currentPage * limit);
+
   return (
     <div className="section">
       <div className="container">
         <div className="section-title-wrapper">
-          <h1 className="section-title">Media & Promotional Gallery</h1>
+          <h1 className="section-title">Event Gallery</h1>
           <p className="section-subtitle">Insights into our hackathons, summit keynotes, and physical workstations.</p>
         </div>
 
@@ -739,15 +1173,57 @@ function GalleryPage({ gallery }) {
           ))}
         </div>
 
-        {/* Gallery Grid */}
-        <div className="gallery-grid">
-          {filteredGallery.map((item) => (
-            <div key={item._id} className="gallery-item" onClick={() => setActiveImage(item)}>
-              <img src={item.imageUrl} alt={item.caption} className="gallery-item-img" />
-              <div className="gallery-caption">{item.caption}</div>
+        {loading ? (
+          <div className="card-grid">
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        ) : filteredGallery.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-muted)', fontSize: '15px' }}>
+            🖼 No event gallery items found.
+          </div>
+        ) : (
+          <>
+            {/* Gallery Grid */}
+            <div className="gallery-grid">
+              {paginatedGallery.map((item) => (
+                <div key={item._id} className="gallery-item" onClick={() => setActiveImage(item)}>
+                  <img src={item.imageUrl} alt={item.caption} className="gallery-item-img" />
+                  <div className="gallery-caption">
+                    <span className="gallery-caption-text">{item.caption}</span>
+                    {item.eventId && (
+                      <span className="gallery-event-link" style={{ display: 'block', fontSize: '11px', color: 'var(--color-accent)', marginTop: '4px', fontWeight: '600' }}>
+                        📅 {item.eventId.title}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="pagination-bar" style={{ marginTop: '40px' }}>
+                <button 
+                  className="btn btn-secondary btn-sm" 
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                >
+                  ◀ Prev
+                </button>
+                <span className="pagination-info">Page {currentPage} of {totalPages}</span>
+                <button 
+                  className="btn btn-secondary btn-sm" 
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                >
+                  Next ▶
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* Lightbox Overlay */}
@@ -760,6 +1236,11 @@ function GalleryPage({ gallery }) {
               <div style={{ marginTop: '15px', textAlign: 'center', fontWeight: '500', fontSize: '15px' }}>
                 {activeImage.caption}
               </div>
+              {activeImage.eventId && (
+                <div style={{ textAlign: 'center', fontSize: '13px', color: 'var(--color-primary)', marginTop: '6px', fontWeight: '600' }}>
+                  Linked Event: 📅 {activeImage.eventId.title}
+                </div>
+              )}
               <div style={{ textAlign: 'center', color: 'var(--color-accent)', fontSize: '12px', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '1px' }}>
                 Category: {activeImage.category}
               </div>
@@ -774,7 +1255,13 @@ function GalleryPage({ gallery }) {
 // ==========================================
 // 8. TESTIMONIALS PAGE
 // ==========================================
-function TestimonialsPage({ testimonials, setTestimonials }) {
+// ==========================================
+// 8. TESTIMONIALS PAGE
+// ==========================================
+function TestimonialsPage({ testimonials, setTestimonials, setToast }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const limit = 4;
+
   // Testimonial Form State
   const [formData, setFormData] = useState({
     customerName: '',
@@ -782,7 +1269,6 @@ function TestimonialsPage({ testimonials, setTestimonials }) {
     reviewText: '',
     rating: 5
   });
-  const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
@@ -801,9 +1287,10 @@ function TestimonialsPage({ testimonials, setTestimonials }) {
       if (res.ok) {
         const newTest = await res.json();
         setTestimonials((prev) => [newTest, ...prev]);
-        setSuccess(true);
         setError('');
         setFormData({ customerName: '', companyName: '', reviewText: '', rating: 5 });
+        setToast({ show: true, message: "Thank you for sharing your experience!", type: 'success' });
+        setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 4000);
       } else {
         setError("Error submitting testimonial.");
       }
@@ -818,11 +1305,19 @@ function TestimonialsPage({ testimonials, setTestimonials }) {
         createdAt: new Date().toISOString()
       };
       setTestimonials((prev) => [mockTest, ...prev]);
-      setSuccess(true);
       setError('');
       setFormData({ customerName: '', companyName: '', reviewText: '', rating: 5 });
+      setToast({ show: true, message: "Review posted in demo offline mode!", type: 'success' });
+      setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 4000);
     }
   };
+
+  const totalRating = testimonials.reduce((sum, t) => sum + t.rating, 0);
+  const average = testimonials.length > 0 ? (totalRating / testimonials.length).toFixed(1) : "0.0";
+  const numReviews = testimonials.length;
+
+  const totalPages = Math.ceil(testimonials.length / limit);
+  const paginatedTestimonials = testimonials.slice((currentPage - 1) * limit, currentPage * limit);
 
   return (
     <div className="section">
@@ -832,8 +1327,17 @@ function TestimonialsPage({ testimonials, setTestimonials }) {
           <p className="section-subtitle">Reviews from enterprise executives and operations managers.</p>
         </div>
 
-        <div className="testimonials-grid" style={{ marginBottom: '80px' }}>
-          {testimonials.map((test) => (
+        {/* Rating Summary Card */}
+        <div className="testimonials-rating-summary">
+          <div className="testimonials-rating-score">{average}</div>
+          <div>
+            <div className="testimonials-rating-stars">{"★".repeat(Math.round(Number(average)))}</div>
+            <div className="testimonials-rating-label">Partner Rating Average ({numReviews} Reviews)</div>
+          </div>
+        </div>
+
+        <div className="testimonials-grid" style={{ marginBottom: '60px' }}>
+          {paginatedTestimonials.map((test) => (
             <div key={test._id} className="testimonial-item">
               <div className="stars" style={{ marginBottom: '10px' }}>{"★".repeat(test.rating)}</div>
               <p style={{ fontSize: '14px', fontStyle: 'italic', marginBottom: '15px', color: 'var(--color-primary)' }}>"{test.reviewText}"</p>
@@ -843,12 +1347,32 @@ function TestimonialsPage({ testimonials, setTestimonials }) {
           ))}
         </div>
 
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="pagination-bar" style={{ marginBottom: '60px' }}>
+            <button 
+              className="btn btn-secondary btn-sm" 
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            >
+              ◀ Prev
+            </button>
+            <span className="pagination-info">Page {currentPage} of {totalPages}</span>
+            <button 
+              className="btn btn-secondary btn-sm" 
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            >
+              Next ▶
+            </button>
+          </div>
+        )}
+
         {/* Form to submit review */}
         <div style={{ maxWidth: '600px', margin: '0 auto', border: '1px solid var(--color-border)', padding: '40px', borderRadius: '6px', backgroundColor: 'var(--color-bg-white)' }}>
           <h3 style={{ fontSize: '20px', marginBottom: '12px', color: 'var(--color-primary)' }}>Submit Your Partner Feedback</h3>
           <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '24px' }}>We value your feedback. Let other businesses know about your development experience.</p>
           
-          {success && <div className="form-success-banner">Thank you! Your testimonial has been posted successfully.</div>}
           {error && <div className="form-error" style={{ marginBottom: '15px' }}>{error}</div>}
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -908,7 +1432,7 @@ function TestimonialsPage({ testimonials, setTestimonials }) {
 // ==========================================
 // 9. CONTACT US PAGE
 // ==========================================
-function ContactPage() {
+function ContactPage({ setToast }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -920,7 +1444,6 @@ function ContactPage() {
   });
 
   const [formErrors, setFormErrors] = useState({});
-  const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const validateForm = () => {
@@ -952,7 +1475,6 @@ function ContactPage() {
       });
 
       if (res.ok) {
-        setSuccess(true);
         setFormData({
           name: '',
           email: '',
@@ -962,6 +1484,8 @@ function ContactPage() {
           jobTitle: '',
           jobDetails: ''
         });
+        setToast({ show: true, message: "Consultation request submitted successfully!", type: 'success' });
+        setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 4000);
       } else {
         const errorData = await res.json();
         alert(errorData.message || "Failed to submit inquiry.");
@@ -969,7 +1493,8 @@ function ContactPage() {
     } catch (err) {
       console.error(err);
       // Offline fallback indicator
-      setSuccess(true);
+      setToast({ show: true, message: "Consultation request submitted in demo offline mode!", type: 'success' });
+      setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 4000);
     } finally {
       setSubmitting(false);
     }
@@ -998,11 +1523,6 @@ function ContactPage() {
 
           {/* Form Column */}
           <div className="contact-form-card">
-            {success && (
-              <div className="form-success-banner">
-                <strong>Inquiry Submitted!</strong> Your request has been transmitted to our consulting office. An engineer will reach out to your team shortly.
-              </div>
-            )}
             <form onSubmit={handleSubmit}>
               <div className="form-grid">
                 <div className="form-group">
@@ -1104,6 +1624,8 @@ function ContactPage() {
 function ChatbotWidget({ solutions, navigateTo }) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [hasUnread, setHasUnread] = useState(true);
   const [messages, setMessages] = useState([
     { id: 1, text: "Hello! Welcome to AI-Solutions. I am your virtual FAQ and service recommendation helper.", isBot: true },
     { id: 2, text: "Please click on one of the quick options below, or type your custom questions.", isBot: true, isOptions: true }
@@ -1115,79 +1637,76 @@ function ChatbotWidget({ solutions, navigateTo }) {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages, isOpen]);
+  }, [messages, isTyping, isOpen]);
 
-  const handleOptionClick = (opt) => {
-    // Add user message
-    const userMsg = { id: Date.now(), text: opt, isBot: false };
-    setMessages((prev) => [...prev, userMsg]);
-
-    setTimeout(() => {
-      let botResponse = "";
-      if (opt === "View Business FAQs") {
-        botResponse = "We are located at 100 Technology Way, Silicon Valley, CA. Our business hours are Monday through Friday, 9:00 AM - 6:00 PM PST. We offer remote consulting services globally.";
-      } else if (opt === "Recommend Services") {
-        if (solutions.length > 0) {
-          botResponse = "Based on our active projects, I highly recommend checking out: " + 
-            solutions.map(s => `\n• ${s.title}`).join('') + 
-            "\n\nWould you like me to take you to our Services catalog?";
-        } else {
-          botResponse = "We specialize in Custom Enterprise Software, Predictive Analytics, and Cybersecurity audits. You can explore them on our Services page!";
-        }
-      } else if (opt === "How to Contact an Engineer") {
-        botResponse = "You can fill out our detailed consultation form. Would you like me to automatically navigate you to the Contact Us page?";
-      }
-
-      const botMsg = { id: Date.now() + 1, text: botResponse, isBot: true };
+  const handleSendText = async (textToSend) => {
+    const userMsg = { id: Date.now(), text: textToSend, isBot: false };
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
+    setIsTyping(true);
+    
+    try {
+      const res = await fetch(`${API_URL}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: updatedMessages })
+      });
       
-      // If navigation suggestion is needed, append nav option
-      if (opt === "Recommend Services") {
-        botMsg.hasNavAction = true;
-        botMsg.navTarget = "services";
-        botMsg.navText = "Go to Services Page";
-      } else if (opt === "How to Contact an Engineer") {
+      if (!res.ok) throw new Error("API error");
+      const data = await res.json();
+      
+      const botMsg = { id: Date.now() + 1, text: data.reply, isBot: true };
+      
+      const replyLower = data.reply.toLowerCase();
+      if (replyLower.includes('contact') || replyLower.includes('consultation') || replyLower.includes('inquiry')) {
         botMsg.hasNavAction = true;
         botMsg.navTarget = "contact";
         botMsg.navText = "Go to Contact Us Page";
+      } else if (replyLower.includes('services') || replyLower.includes('solutions') || replyLower.includes('pricing')) {
+        botMsg.hasNavAction = true;
+        botMsg.navTarget = "services";
+        botMsg.navText = "Go to Services Page";
+      } else if (replyLower.includes('projects') || replyLower.includes('case studies') || replyLower.includes('portfolio')) {
+        botMsg.hasNavAction = true;
+        botMsg.navTarget = "projects";
+        botMsg.navText = "Go to Projects Page";
       }
+      
+      setMessages(prev => [...prev, botMsg]);
+    } catch (err) {
+      console.error("Chatbot API failed, using fallback:", err);
+      let reply = "I'm having trouble connecting to the AI brain right now. For technical discussions, please contact our team via the Contact Us page!";
+      const textLower = textToSend.toLowerCase();
+      if (textLower.includes('faq') || textLower.includes('hours') || textLower.includes('location')) {
+        reply = "AI-Solutions is open Monday - Friday, 9:00 AM - 6:00 PM PST. Our office is located in Silicon Valley, CA.";
+      } else if (textLower.includes('service') || textLower.includes('solutions')) {
+        reply = "We offer cloud infrastructure setup, custom enterprise software, and predictive analytics. You can learn more on our Services page.";
+      }
+      setMessages(prev => [...prev, { id: Date.now() + 1, text: reply, isBot: true }]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
 
-      setMessages((prev) => [...prev, botMsg]);
-    }, 600);
+  const handleOptionClick = (opt) => {
+    handleSendText(opt);
   };
 
   const handleSend = (e) => {
     e.preventDefault();
     if (!input.trim()) return;
-
     const userText = input.trim();
-    const userMsg = { id: Date.now(), text: userText, isBot: false };
-    setMessages((prev) => [...prev, userMsg]);
     setInput('');
-
-    setTimeout(() => {
-      let botResponse = "";
-      const textLower = userText.toLowerCase();
-
-      if (textLower.includes('faq') || textLower.includes('hours') || textLower.includes('location') || textLower.includes('where')) {
-        botResponse = "AI-Solutions is open Monday - Friday, 9am - 6pm PST. Our engineering headquarters is in Silicon Valley.";
-      } else if (textLower.includes('service') || textLower.includes('solution') || textLower.includes('software') || textLower.includes('build')) {
-        botResponse = "We build tailored software architectures. Key solutions we provide include Cloud infrastructure, Zero-trust security, and Machine Learning. You can view them details-wise on our Services page!";
-      } else if (textLower.includes('contact') || textLower.includes('phone') || textLower.includes('email') || textLower.includes('talk')) {
-        botResponse = "To speak with a lead developer, please fill out the consultation form on the Contact page.";
-      } else if (textLower.includes('about') || textLower.includes('who') || textLower.includes('team')) {
-        botResponse = "We are an experienced team of software consultants and cloud specialists. You can read our bios on the About Us page!";
-      } else {
-        botResponse = "Thank you for reaching out. I'm a simple FAQ assistant. For advanced technical discussions, please use our Contact form or email us at support@ai-solutions.com.";
-      }
-
-      setMessages((prev) => [...prev, { id: Date.now() + 1, text: botResponse, isBot: true }]);
-    }, 600);
+    handleSendText(userText);
   };
 
   return (
     <div className="chatbot-widget">
       {/* Bubble button */}
-      <div className="chatbot-bubble" onClick={() => setIsOpen(!isOpen)}>
+      <div 
+        className={`chatbot-bubble ${hasUnread ? 'chatbot-bubble-unread' : ''}`} 
+        onClick={() => { setIsOpen(!isOpen); setHasUnread(false); }}
+      >
         {isOpen ? '💬' : '🤖'}
       </div>
 
@@ -1230,6 +1749,13 @@ function ChatbotWidget({ solutions, navigateTo }) {
                 )}
               </div>
             ))}
+            {isTyping && (
+              <div className="chat-msg chat-msg-typing">
+                <span className="typing-dot"></span>
+                <span className="typing-dot"></span>
+                <span className="typing-dot"></span>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
 
@@ -1245,6 +1771,111 @@ function ChatbotWidget({ solutions, navigateTo }) {
           </form>
         </div>
       )}
+    </div>
+  );
+}
+
+// ==========================================
+// 11. BREADCRUMBS COMPONENT
+// ==========================================
+function Breadcrumbs({ page, navigateTo }) {
+  if (page === 'home' || page === '404' || page === '403' || page === '500') return null;
+
+  const getLabel = () => {
+    switch (page) {
+      case 'about': return 'About Us';
+      case 'services': return 'Solutions & Services';
+      case 'projects': return 'Case Studies';
+      case 'blog': return 'Tech Articles';
+      case 'events': return 'Scheduled Events';
+      case 'gallery': return 'Event Gallery';
+      case 'testimonials': return 'Client Endorsements';
+      case 'contact': return 'Contact Us';
+      default: return page;
+    }
+  };
+
+  return (
+    <div className="breadcrumbs-container">
+      <div className="container">
+        <span className="breadcrumb-link" onClick={() => navigateTo('home')}>Home</span>
+        <span className="breadcrumb-separator">/</span>
+        <span className="breadcrumb-current">{getLabel()}</span>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// 12. TOAST ALERT COMPONENT
+// ==========================================
+function Toast({ toast, setToast }) {
+  if (!toast.show) return null;
+
+  return (
+    <div className={`toast-alert toast-${toast.type}`}>
+      <span className="toast-icon">✓</span>
+      <span className="toast-message">{toast.message}</span>
+      <button className="toast-close-btn" onClick={() => setToast({ show: false, message: '', type: 'success' })}>×</button>
+    </div>
+  );
+}
+
+// ==========================================
+// 13. SKELETON CARD COMPONENT
+// ==========================================
+function SkeletonCard() {
+  return (
+    <div className="skeleton-card">
+      <div className="skeleton-image pulsing"></div>
+      <div className="skeleton-body">
+        <div className="skeleton-title pulsing"></div>
+        <div className="skeleton-desc pulsing"></div>
+        <div className="skeleton-desc pulsing" style={{ width: '80%' }}></div>
+        <div className="skeleton-meta pulsing" style={{ width: '50%', marginTop: '15px' }}></div>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// 14. ERROR PAGES
+// ==========================================
+function Error404Page({ navigateTo }) {
+  return (
+    <div className="section error-page">
+      <div className="container" style={{ textAlign: 'center', padding: '60px 20px' }}>
+        <h1 className="error-code">404</h1>
+        <h2 className="error-title">Page Not Found</h2>
+        <p className="error-desc">We apologize, but the digital blueprint or URL pathway you are seeking does not exist in our system router.</p>
+        <button className="btn btn-primary" onClick={() => navigateTo('home')}>Return to System Home</button>
+      </div>
+    </div>
+  );
+}
+
+function Error403Page({ navigateTo }) {
+  return (
+    <div className="section error-page">
+      <div className="container" style={{ textAlign: 'center', padding: '60px 20px' }}>
+        <h1 className="error-code" style={{ color: '#ef4444' }}>403</h1>
+        <h2 className="error-title">Access Forbidden</h2>
+        <p className="error-desc">Authorization required. Your security credentials do not grant read/write access to this restricted folder.</p>
+        <button className="btn btn-primary" onClick={() => navigateTo('home')}>Return to System Home</button>
+      </div>
+    </div>
+  );
+}
+
+function Error500Page({ navigateTo }) {
+  return (
+    <div className="section error-page">
+      <div className="container" style={{ textAlign: 'center', padding: '60px 20px' }}>
+        <h1 className="error-code" style={{ color: '#6b7280' }}>500</h1>
+        <h2 className="error-title">Internal Server Error</h2>
+        <p className="error-desc">Critical socket exception. The central backend server encountered an unexpected error. Our system engineers are responding.</p>
+        <button className="btn btn-primary" onClick={() => navigateTo('home')}>Return to System Home</button>
+      </div>
     </div>
   );
 }
