@@ -8,7 +8,7 @@ function App() {
   const [page, setPage] = useState('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
-  
+
   // Data State
   const [solutions, setSolutions] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -16,7 +16,7 @@ function App() {
   const [events, setEvents] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
-  
+
   // Loading & Error States
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,7 +26,7 @@ function App() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
+
         // Parallel fetching
         const [resSol, resProj, resArt, resEvt, resGal, resTest] = await Promise.all([
           fetch(`${API_URL}/solutions`),
@@ -145,14 +145,14 @@ function App() {
       {/* PAGE CONTENT ROUTER */}
       <main className="main-content">
         {page === 'home' && (
-          <HomePage 
-            solutions={solutions} 
-            projects={projects} 
-            testimonials={testimonials} 
-            articles={articles} 
-            events={events} 
-            gallery={gallery} 
-            navigateTo={navigateTo} 
+          <HomePage
+            solutions={solutions}
+            projects={projects}
+            testimonials={testimonials}
+            articles={articles}
+            events={events}
+            gallery={gallery}
+            navigateTo={navigateTo}
           />
         )}
         {page === 'about' && <AboutPage />}
@@ -251,7 +251,7 @@ function HomePage({ solutions, projects, testimonials, articles, events, gallery
           </div>
         </div>
       </section>
-
+//
       {/* FEATURED SOLUTIONS */}
       <section className="section">
         <div className="container">
@@ -360,7 +360,7 @@ function HomePage({ solutions, projects, testimonials, articles, events, gallery
                   </div>
                   <div>
                     <h3 className="event-content-title">
-                      {evt.title} 
+                      {evt.title}
                       {evt.isPromotional && <span className="badge badge-promotional">Promotional</span>}
                     </h3>
                     <p style={{ color: 'var(--color-text-muted)', fontSize: '14px' }}>{evt.description}</p>
@@ -471,8 +471,8 @@ function ServicesPage({ solutions, loading, navigateTo }) {
   const [selectedSolution, setSelectedSolution] = useState(null);
   const [search, setSearch] = useState('');
 
-  const filtered = solutions.filter(sol => 
-    sol.title.toLowerCase().includes(search.toLowerCase()) || 
+  const filtered = solutions.filter(sol =>
+    sol.title.toLowerCase().includes(search.toLowerCase()) ||
     sol.description.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -486,10 +486,10 @@ function ServicesPage({ solutions, loading, navigateTo }) {
 
         {/* Search bar */}
         <div className="search-bar" style={{ marginBottom: '30px', display: 'flex', justifyContent: 'center' }}>
-          <input 
-            type="text" 
-            placeholder="Search our solutions..." 
-            className="search-input" 
+          <input
+            type="text"
+            placeholder="Search our solutions..."
+            className="search-input"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{ width: '100%', maxWidth: '400px' }}
@@ -531,7 +531,7 @@ function ServicesPage({ solutions, loading, navigateTo }) {
             <div className="modal-body">
               <h2 className="section-title" style={{ textAlign: 'left', fontSize: '24px', marginBottom: '15px' }}>{selectedSolution.title}</h2>
               <p style={{ marginBottom: '25px', color: 'var(--color-text-muted)' }}>{selectedSolution.description}</p>
-              
+
               <h4 style={{ marginBottom: '12px', fontSize: '15px', color: 'var(--color-primary)' }}>Key Features Included:</h4>
               <ul className="card-features" style={{ listStyle: 'none', padding: 0 }}>
                 {selectedSolution.details && selectedSolution.details.map((detail, idx) => (
@@ -560,8 +560,8 @@ function ProjectsPage({ projects, loading }) {
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 3;
 
-  const filtered = projects.filter(proj => 
-    proj.title.toLowerCase().includes(search.toLowerCase()) || 
+  const filtered = projects.filter(proj =>
+    proj.title.toLowerCase().includes(search.toLowerCase()) ||
     proj.description.toLowerCase().includes(search.toLowerCase()) ||
     proj.clientName.toLowerCase().includes(search.toLowerCase())
   );
@@ -584,10 +584,10 @@ function ProjectsPage({ projects, loading }) {
 
         {/* Search filter */}
         <div className="search-bar" style={{ marginBottom: '30px', display: 'flex', justifyContent: 'center' }}>
-          <input 
-            type="text" 
-            placeholder="Search case studies..." 
-            className="search-input" 
+          <input
+            type="text"
+            placeholder="Search case studies..."
+            className="search-input"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{ width: '100%', maxWidth: '400px' }}
@@ -617,7 +617,7 @@ function ProjectsPage({ projects, loading }) {
                     </div>
                     <h3 className="project-title" style={{ fontSize: '18px' }}>{proj.title}</h3>
                     <p className="project-desc" style={{ flexGrow: 1 }}>{proj.description}</p>
-                    
+
                     {proj.details && (
                       <div style={{ marginTop: '15px', padding: '12px', backgroundColor: 'var(--color-bg-light)', borderLeft: '3px solid var(--color-accent)', fontSize: '13px', fontStyle: 'italic', marginBottom: '15px' }}>
                         {proj.details}
@@ -631,16 +631,16 @@ function ProjectsPage({ projects, loading }) {
             {/* Pagination controls */}
             {totalPages > 1 && (
               <div className="pagination-bar">
-                <button 
-                  className="btn btn-secondary btn-sm" 
+                <button
+                  className="btn btn-secondary btn-sm"
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 >
                   ◀ Prev
                 </button>
                 <span className="pagination-info">Page {currentPage} of {totalPages}</span>
-                <button 
-                  className="btn btn-secondary btn-sm" 
+                <button
+                  className="btn btn-secondary btn-sm"
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 >
@@ -672,9 +672,9 @@ function BlogPage({ articles, loading }) {
 
   // Filter Articles
   const filteredArticles = articles.filter((art) => {
-    const matchesSearch = art.title.toLowerCase().includes(search.toLowerCase()) || 
-                          art.description.toLowerCase().includes(search.toLowerCase()) ||
-                          art.content.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = art.title.toLowerCase().includes(search.toLowerCase()) ||
+      art.description.toLowerCase().includes(search.toLowerCase()) ||
+      art.content.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || art.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -699,10 +699,10 @@ function BlogPage({ articles, loading }) {
 
         {/* SEARCH AND FILTERS */}
         <div className="search-bar">
-          <input 
-            type="text" 
-            placeholder="Search articles..." 
-            className="search-input" 
+          <input
+            type="text"
+            placeholder="Search articles..."
+            className="search-input"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -710,8 +710,8 @@ function BlogPage({ articles, loading }) {
 
         <div className="gallery-filter">
           {categories.map((cat) => (
-            <button 
-              key={cat} 
+            <button
+              key={cat}
               className={`filter-btn ${selectedCategory === cat ? 'active' : ''}`}
               onClick={() => setSelectedCategory(cat)}
             >
@@ -775,16 +775,16 @@ function BlogPage({ articles, loading }) {
             {/* Pagination Controls */}
             {totalPages > 1 && (
               <div className="pagination-bar" style={{ marginTop: '40px' }}>
-                <button 
-                  className="btn btn-secondary btn-sm" 
+                <button
+                  className="btn btn-secondary btn-sm"
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 >
                   ◀ Prev
                 </button>
                 <span className="pagination-info">Page {currentPage} of {totalPages}</span>
-                <button 
-                  className="btn btn-secondary btn-sm" 
+                <button
+                  className="btn btn-secondary btn-sm"
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 >
@@ -859,13 +859,13 @@ function EventsPage({ events, gallery }) {
         {/* Toggle tabs at top */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '40px' }}>
           <div className="event-filter-container">
-            <button 
+            <button
               className={`event-filter-btn ${activeTab === 'upcoming' ? 'active' : ''}`}
               onClick={() => setActiveTab('upcoming')}
             >
               Upcoming ({upcomingEvents.length})
             </button>
-            <button 
+            <button
               className={`event-filter-btn ${activeTab === 'past' ? 'active' : ''}`}
               onClick={() => setActiveTab('past')}
             >
@@ -891,8 +891,8 @@ function EventsPage({ events, gallery }) {
                 evt.title.toLowerCase().includes('expo') || evt.title.toLowerCase().includes('summit') || evt.isPromotional
                   ? "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=600"
                   : evt.title.toLowerCase().includes('hackathon') || evt.title.toLowerCase().includes('dev')
-                  ? "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=600"
-                  : "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=600"
+                    ? "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=600"
+                    : "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=600"
               );
 
               return (
@@ -909,13 +909,13 @@ function EventsPage({ events, gallery }) {
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="event-card-body">
                     <h3 className={`event-card-title ${evt.isPromotional ? 'promotional' : 'standard'}`}>
                       {evt.title}
                     </h3>
                     <p className="event-card-desc">{evt.description}</p>
-                    
+
                     <div className="event-card-actions">
                       <button className="event-action-link primary" onClick={() => setSelectedEvent(evt)}>
                         View Details →
@@ -965,18 +965,18 @@ function EventsPage({ events, gallery }) {
               </div>
               <div className="modal-body" style={{ padding: '24px', maxHeight: '75vh', overflowY: 'auto' }}>
                 <div style={{ position: 'relative', height: '220px', borderRadius: '8px', overflow: 'hidden', marginBottom: '20px' }}>
-                  <img 
+                  <img
                     src={
                       selectedEvent.image || (
                         selectedEvent.title.toLowerCase().includes('expo') || selectedEvent.title.toLowerCase().includes('summit') || selectedEvent.isPromotional
                           ? "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=600"
                           : selectedEvent.title.toLowerCase().includes('hackathon') || selectedEvent.title.toLowerCase().includes('dev')
-                          ? "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=600"
-                          : "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=600"
+                            ? "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=600"
+                            : "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=600"
                       )
-                    } 
-                    alt={selectedEvent.title} 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    }
+                    alt={selectedEvent.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                   {selectedEvent.isPromotional && (
                     <div className="event-promotional-badge" style={{ top: '12px', right: '12px' }}>
@@ -984,11 +984,11 @@ function EventsPage({ events, gallery }) {
                     </div>
                   )}
                 </div>
-                
+
                 <h2 style={{ fontSize: '22px', fontWeight: '700', color: 'var(--color-primary)', marginBottom: '16px' }}>
                   {selectedEvent.title}
                 </h2>
-                
+
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px', padding: '16px', backgroundColor: 'var(--color-bg-light)', borderRadius: '8px', fontSize: '14px' }}>
                   <div>
                     <strong style={{ display: 'block', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Date</strong>
@@ -1003,7 +1003,7 @@ function EventsPage({ events, gallery }) {
                     📍 {selectedEvent.location}
                   </div>
                 </div>
-                
+
                 <div style={{ fontSize: '15px', color: 'var(--color-text)', lineHeight: '1.6' }}>
                   <strong style={{ display: 'block', marginBottom: '8px', color: 'var(--color-primary)' }}>About the Event</strong>
                   <p style={{ whiteSpace: 'pre-line' }}>{selectedEvent.description}</p>
@@ -1017,12 +1017,12 @@ function EventsPage({ events, gallery }) {
                     </strong>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '12px' }}>
                       {relatedImages.map((img) => (
-                        <div 
-                          key={img._id} 
-                          style={{ 
-                            borderRadius: '6px', 
-                            overflow: 'hidden', 
-                            border: '1px solid var(--color-border)', 
+                        <div
+                          key={img._id}
+                          style={{
+                            borderRadius: '6px',
+                            overflow: 'hidden',
+                            border: '1px solid var(--color-border)',
                             backgroundColor: 'var(--color-bg-light)',
                             cursor: 'pointer',
                             position: 'relative'
@@ -1031,24 +1031,24 @@ function EventsPage({ events, gallery }) {
                           className="modal-gallery-img-wrapper"
                         >
                           <div style={{ height: '90px', overflow: 'hidden' }}>
-                            <img 
-                              src={img.imageUrl} 
-                              alt={img.caption} 
-                              style={{ 
-                                width: '100%', 
-                                height: '100%', 
+                            <img
+                              src={img.imageUrl}
+                              alt={img.caption}
+                              style={{
+                                width: '100%',
+                                height: '100%',
                                 objectFit: 'cover',
                                 transition: 'transform 0.3s ease'
-                              }} 
+                              }}
                               className="modal-gallery-thumbnail"
                             />
                           </div>
-                          <div style={{ 
-                            padding: '6px', 
-                            fontSize: '11px', 
-                            color: 'var(--color-text)', 
-                            whiteSpace: 'nowrap', 
-                            overflow: 'hidden', 
+                          <div style={{
+                            padding: '6px',
+                            fontSize: '11px',
+                            color: 'var(--color-text)',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             textAlign: 'center',
                             fontWeight: '500'
@@ -1062,9 +1062,9 @@ function EventsPage({ events, gallery }) {
                 )}
               </div>
               <div className="modal-footer" style={{ borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'flex-end', padding: '16px 24px' }}>
-                <a 
-                  href={`mailto:events@ai-solutions.com?subject=Registration for ${selectedEvent.title}`} 
-                  className="btn btn-primary" 
+                <a
+                  href={`mailto:events@ai-solutions.com?subject=Registration for ${selectedEvent.title}`}
+                  className="btn btn-primary"
                   style={{ textDecoration: 'none', color: '#ffffff' }}
                 >
                   Register via Email
@@ -1163,8 +1163,8 @@ function GalleryPage({ gallery, loading }) {
         {/* Filters */}
         <div className="gallery-filter">
           {categories.map((cat) => (
-            <button 
-              key={cat} 
+            <button
+              key={cat}
               className={`filter-btn ${selectedCategory === cat ? 'active' : ''}`}
               onClick={() => setSelectedCategory(cat)}
             >
@@ -1205,16 +1205,16 @@ function GalleryPage({ gallery, loading }) {
             {/* Pagination Controls */}
             {totalPages > 1 && (
               <div className="pagination-bar" style={{ marginTop: '40px' }}>
-                <button 
-                  className="btn btn-secondary btn-sm" 
+                <button
+                  className="btn btn-secondary btn-sm"
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 >
                   ◀ Prev
                 </button>
                 <span className="pagination-info">Page {currentPage} of {totalPages}</span>
-                <button 
-                  className="btn btn-secondary btn-sm" 
+                <button
+                  className="btn btn-secondary btn-sm"
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 >
@@ -1350,16 +1350,16 @@ function TestimonialsPage({ testimonials, setTestimonials, setToast }) {
         {/* Pagination Controls */}
         {totalPages > 1 && (
           <div className="pagination-bar" style={{ marginBottom: '60px' }}>
-            <button 
-              className="btn btn-secondary btn-sm" 
+            <button
+              className="btn btn-secondary btn-sm"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
             >
               ◀ Prev
             </button>
             <span className="pagination-info">Page {currentPage} of {totalPages}</span>
-            <button 
-              className="btn btn-secondary btn-sm" 
+            <button
+              className="btn btn-secondary btn-sm"
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
             >
@@ -1372,15 +1372,15 @@ function TestimonialsPage({ testimonials, setTestimonials, setToast }) {
         <div style={{ maxWidth: '600px', margin: '0 auto', border: '1px solid var(--color-border)', padding: '40px', borderRadius: '6px', backgroundColor: 'var(--color-bg-white)' }}>
           <h3 style={{ fontSize: '20px', marginBottom: '12px', color: 'var(--color-primary)' }}>Submit Your Partner Feedback</h3>
           <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '24px' }}>We value your feedback. Let other businesses know about your development experience.</p>
-          
+
           {error && <div className="form-error" style={{ marginBottom: '15px' }}>{error}</div>}
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div className="form-group">
               <label className="form-label">Full Name</label>
-              <input 
-                type="text" 
-                className="form-input" 
+              <input
+                type="text"
+                className="form-input"
                 value={formData.customerName}
                 onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
                 required
@@ -1388,9 +1388,9 @@ function TestimonialsPage({ testimonials, setTestimonials, setToast }) {
             </div>
             <div className="form-group">
               <label className="form-label">Job Title / Company Name</label>
-              <input 
-                type="text" 
-                className="form-input" 
+              <input
+                type="text"
+                className="form-input"
                 placeholder="e.g. VP of IT, Acme Corp"
                 value={formData.companyName}
                 onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
@@ -1399,8 +1399,8 @@ function TestimonialsPage({ testimonials, setTestimonials, setToast }) {
             </div>
             <div className="form-group">
               <label className="form-label">Feedback Review Text</label>
-              <textarea 
-                className="form-input" 
+              <textarea
+                className="form-input"
                 style={{ height: '100px', resize: 'vertical' }}
                 value={formData.reviewText}
                 onChange={(e) => setFormData({ ...formData, reviewText: e.target.value })}
@@ -1409,7 +1409,7 @@ function TestimonialsPage({ testimonials, setTestimonials, setToast }) {
             </div>
             <div className="form-group">
               <label className="form-label">Star Rating</label>
-              <select 
+              <select
                 className="form-input"
                 value={formData.rating}
                 onChange={(e) => setFormData({ ...formData, rating: Number(e.target.value) })}
@@ -1457,7 +1457,7 @@ function ContactPage({ setToast }) {
     if (!formData.phone.trim()) errors.phone = "Phone number is required.";
     if (!formData.country.trim()) errors.country = "Country is required.";
     if (!formData.jobDetails.trim()) errors.jobDetails = "Project or consultation details are required.";
-    
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -1527,9 +1527,9 @@ function ContactPage({ setToast }) {
               <div className="form-grid">
                 <div className="form-group">
                   <label className="form-label">Full Name *</label>
-                  <input 
-                    type="text" 
-                    className="form-input" 
+                  <input
+                    type="text"
+                    className="form-input"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   />
@@ -1538,9 +1538,9 @@ function ContactPage({ setToast }) {
 
                 <div className="form-group">
                   <label className="form-label">Corporate Email *</label>
-                  <input 
-                    type="email" 
-                    className="form-input" 
+                  <input
+                    type="email"
+                    className="form-input"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   />
@@ -1549,9 +1549,9 @@ function ContactPage({ setToast }) {
 
                 <div className="form-group">
                   <label className="form-label">Phone Number *</label>
-                  <input 
-                    type="text" 
-                    className="form-input" 
+                  <input
+                    type="text"
+                    className="form-input"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   />
@@ -1560,9 +1560,9 @@ function ContactPage({ setToast }) {
 
                 <div className="form-group">
                   <label className="form-label">Company Name</label>
-                  <input 
-                    type="text" 
-                    className="form-input" 
+                  <input
+                    type="text"
+                    className="form-input"
                     value={formData.companyName}
                     onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                   />
@@ -1570,9 +1570,9 @@ function ContactPage({ setToast }) {
 
                 <div className="form-group">
                   <label className="form-label">Country *</label>
-                  <input 
-                    type="text" 
-                    className="form-input" 
+                  <input
+                    type="text"
+                    className="form-input"
                     value={formData.country}
                     onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                   />
@@ -1581,9 +1581,9 @@ function ContactPage({ setToast }) {
 
                 <div className="form-group">
                   <label className="form-label">Job Title</label>
-                  <input 
-                    type="text" 
-                    className="form-input" 
+                  <input
+                    type="text"
+                    className="form-input"
                     value={formData.jobTitle}
                     onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
                   />
@@ -1591,8 +1591,8 @@ function ContactPage({ setToast }) {
 
                 <div className="form-group form-group-full">
                   <label className="form-label">Project Details / Job Specifications *</label>
-                  <textarea 
-                    className="form-input" 
+                  <textarea
+                    className="form-input"
                     style={{ height: '120px', resize: 'vertical' }}
                     placeholder="Briefly describe your computational bottlenecks, user volume, or software scope..."
                     value={formData.jobDetails}
@@ -1602,9 +1602,9 @@ function ContactPage({ setToast }) {
                 </div>
               </div>
 
-              <button 
-                type="submit" 
-                className="btn btn-primary" 
+              <button
+                type="submit"
+                className="btn btn-primary"
                 style={{ marginTop: '24px', width: '100%' }}
                 disabled={submitting}
               >
@@ -1630,7 +1630,7 @@ function ChatbotWidget({ solutions, navigateTo }) {
     { id: 1, text: "Hello! Welcome to AI-Solutions. I am your virtual FAQ and service recommendation helper.", isBot: true },
     { id: 2, text: "Please click on one of the quick options below, or type your custom questions.", isBot: true, isOptions: true }
   ]);
-  
+
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -1644,19 +1644,19 @@ function ChatbotWidget({ solutions, navigateTo }) {
     const updatedMessages = [...messages, userMsg];
     setMessages(updatedMessages);
     setIsTyping(true);
-    
+
     try {
       const res = await fetch(`${API_URL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: updatedMessages })
       });
-      
+
       if (!res.ok) throw new Error("API error");
       const data = await res.json();
-      
+
       const botMsg = { id: Date.now() + 1, text: data.reply, isBot: true };
-      
+
       const replyLower = data.reply.toLowerCase();
       if (replyLower.includes('contact') || replyLower.includes('consultation') || replyLower.includes('inquiry')) {
         botMsg.hasNavAction = true;
@@ -1671,7 +1671,7 @@ function ChatbotWidget({ solutions, navigateTo }) {
         botMsg.navTarget = "projects";
         botMsg.navText = "Go to Projects Page";
       }
-      
+
       setMessages(prev => [...prev, botMsg]);
     } catch (err) {
       console.error("Chatbot API failed, using fallback:", err);
@@ -1703,8 +1703,8 @@ function ChatbotWidget({ solutions, navigateTo }) {
   return (
     <div className="chatbot-widget">
       {/* Bubble button */}
-      <div 
-        className={`chatbot-bubble ${hasUnread ? 'chatbot-bubble-unread' : ''}`} 
+      <div
+        className={`chatbot-bubble ${hasUnread ? 'chatbot-bubble-unread' : ''}`}
         onClick={() => { setIsOpen(!isOpen); setHasUnread(false); }}
       >
         {isOpen ? '💬' : '🤖'}
@@ -1738,8 +1738,8 @@ function ChatbotWidget({ solutions, navigateTo }) {
                 {/* Render dynamic page switcher link */}
                 {msg.hasNavAction && (
                   <div style={{ marginTop: '10px' }}>
-                    <button 
-                      className="btn btn-primary" 
+                    <button
+                      className="btn btn-primary"
                       style={{ padding: '4px 8px', fontSize: '11px' }}
                       onClick={() => { navigateTo(msg.navTarget); setIsOpen(false); }}
                     >
@@ -1760,9 +1760,9 @@ function ChatbotWidget({ solutions, navigateTo }) {
           </div>
 
           <form onSubmit={handleSend} className="chatbot-input-area">
-            <input 
-              type="text" 
-              placeholder="Ask a question..." 
+            <input
+              type="text"
+              placeholder="Ask a question..."
               className="chatbot-input"
               value={input}
               onChange={(e) => setInput(e.target.value)}

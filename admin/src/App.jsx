@@ -9,7 +9,7 @@ function App() {
   );
   const [page, setPage] = useState("dashboard");
   const [adminUser, setAdminUser] = useState(null);
-
+  //
   // Database collections lists
   const [inquiries, setInquiries] = useState([]);
   const [solutions, setSolutions] = useState([]);
@@ -428,15 +428,15 @@ function AdminLogin({ setToken }) {
               >
                 {showPassword ? (
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
-                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
-                    <path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/>
-                    <line x1="2" y1="2" x2="22" y2="22"/>
+                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+                    <path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+                    <line x1="2" y1="2" x2="22" y2="22" />
                   </svg>
                 ) : (
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                    <circle cx="12" cy="12" r="3" />
                   </svg>
                 )}
               </button>
@@ -2925,7 +2925,7 @@ function SettingsView({ adminUser, setAdminUser, token, handleLogout }) {
     e.preventDefault();
     setSuccess(false);
     setError('');
-    
+
     try {
       const res = await fetch(`${API_URL}/auth/profile`, {
         method: 'PUT',
@@ -2957,7 +2957,7 @@ function SettingsView({ adminUser, setAdminUser, token, handleLogout }) {
 
       <div style={{ backgroundColor: 'var(--admin-bg-white)', border: '1px solid var(--admin-border)', padding: '40px', borderRadius: '6px' }}>
         <h3 style={{ fontSize: '18px', marginBottom: '20px' }}>Edit Admin Credentials</h3>
-        
+
         {success && <div style={{ color: 'var(--admin-success)', backgroundColor: '#d1fae5', border: '1px solid #10b981', padding: '12px', borderRadius: '4px', fontSize: '13.5px', marginBottom: '20px', fontWeight: '500' }}>Admin credentials updated successfully!</div>}
         {error && <div style={{ color: 'var(--admin-danger)', backgroundColor: '#fee2e2', padding: '12px', borderRadius: '4px', fontSize: '13.5px', marginBottom: '20px' }}>{error}</div>}
 
@@ -2974,7 +2974,7 @@ function SettingsView({ adminUser, setAdminUser, token, handleLogout }) {
             <label className="form-label">Update Password (Leave blank to keep current)</label>
             <input type="password" className="form-input" placeholder="Enter new password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
           </div>
-          
+
           <div style={{ display: 'flex', gap: '14px', marginTop: '20px' }}>
             <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>Save Profile Settings</button>
             <button type="button" className="btn btn-danger" style={{ flex: 1 }} onClick={handleLogout}>Log Out Panel</button>
