@@ -52,7 +52,7 @@ mongoose.connect(process.env.MONGODB_URI)
 // Login
 app.post('/api/auth/login', async (req, res) => {
   const { username, password } = req.body;
-  
+
   if (!username || !password) {
     return res.status(400).json({ message: 'Username and password are required.' });
   }
@@ -137,7 +137,7 @@ app.put('/api/auth/profile', auth, async (req, res) => {
 // Submit inquiry (Public)
 app.post('/api/inquiries', async (req, res) => {
   const { name, email, phone, companyName, country, jobTitle, jobDetails } = req.body;
-  
+
   if (!name || !email || !phone || !country || !jobDetails) {
     return res.status(400).json({ message: 'Please provide all required fields (Name, Email, Phone, Country, Job Details).' });
   }
@@ -251,7 +251,7 @@ app.put('/api/solutions/:id', auth, async (req, res) => {
   try {
     const solution = await Solution.findById(req.params.id);
     if (!solution) return res.status(404).json({ message: 'Solution not found.' });
-    
+
     if (title) solution.title = title;
     if (description) solution.description = description;
     if (icon) solution.icon = icon;
@@ -655,7 +655,7 @@ app.get('/api/dashboard/analytics', auth, async (req, res) => {
 // ==========================================
 app.post('/api/chat', async (req, res) => {
   const { messages } = req.body;
-  
+
   if (!messages || !Array.isArray(messages)) {
     return res.status(400).json({ message: 'Messages array is required.' });
   }
